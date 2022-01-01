@@ -6,46 +6,7 @@ local headerOpen = false
 local meltedItem = {}
 local meltTime
 
-CreateThread(function()
-	local blip = AddBlipForCoord(Config.PawnLocation.x, Config.PawnLocation.y, Config.PawnLocation.z)
-	SetBlipSprite(blip, 431)
-	SetBlipDisplay(blip, 4)
-	SetBlipScale(blip, 0.7)
-	SetBlipAsShortRange(blip, true)
-	SetBlipColour(blip, 5)
-	BeginTextCommandSetBlipName("STRING")
-	AddTextComponentSubstringPlayerName("Pawn Shop")
-	EndTextCommandSetBlipName(blip)
-end)
-
-CreateThread(function()
-	while true do
-		Wait(500)
-		local pos = GetEntityCoords(PlayerPedId())
-		if #(pos - Config.PawnLocation) < 1.5 then
-			inRange = true
-		else
-			inRange = false
-		end
-		if inRange and not headerOpen then
-			headerOpen = true
-			exports['qb-menu']:showHeader({
-				{
-					header = "Pawn Shop",
-					txt = "Open the Pawn Shop",
-					params = {
-						event = "qb-pawnshop:client:openMenu"
-					}
-				}
-			})
-		end
-		if not inRange and headerOpen then
-			headerOpen = false
-			exports['qb-menu']:closeMenu()
-		end
-    end
-end)
-
+--Events
 RegisterNetEvent('qb-pawnshop:client:openMenu', function()
 	if Config.UseTimes then
 		if GetClockHours() >= Config.TimeOpen and GetClockHours() <= Config.TimeClosed then
@@ -303,4 +264,46 @@ end)
 
 RegisterNetEvent('qb-pawnshop:client:resetPickup', function()
 	canTake = false
+end)
+
+
+--Threads
+CreateThread(function()
+	local blip = AddBlipForCoord(Config.PawnLocation.x, Config.PawnLocation.y, Config.PawnLocation.z)
+	SetBlipSprite(blip, 431)
+	SetBlipDisplay(blip, 4)
+	SetBlipScale(blip, 0.7)
+	SetBlipAsShortRange(blip, true)
+	SetBlipColour(blip, 5)
+	BeginTextCommandSetBlipName("STRING")
+	AddTextComponentSubstringPlayerName("Pawn Shop")
+	EndTextCommandSetBlipName(blip)
+end)
+
+CreateThread(function()
+	while true do
+		Wait(500)
+		local pos = GetEntityCoords(PlayerPedId())
+		if #(pos - Config.PawnLocation) < 1.5 then
+			inRange = true
+		else
+			inRange = false
+		end
+		if inRange and not headerOpen then
+			headerOpen = true
+			exports['qb-menu']:showHeader({
+				{
+					header = "Pawn Shop",
+					txt = "Open the Pawn Shop",
+					params = {
+						event = "qb-pawnshop:client:openMenu"
+					}
+				}
+			})
+		end
+		if not inRange and headerOpen then
+			headerOpen = false
+			exports['qb-menu']:closeMenu()
+		end
+    end
 end)
